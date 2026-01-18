@@ -131,6 +131,22 @@ class HotbiteTestimonials extends HTMLElement {
           justify-content: space-between;
           gap: 12px;
         }
+        .notice {
+          min-height: 32px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          background: rgba(0,0,0,.5);
+          border: 1px solid rgba(255,255,255,.18);
+          color: rgba(255,255,255,.85);
+        }
+        .notice.hidden { display: none; }
+        .notice.success { background: rgba(10, 120, 40, .4); border-color: rgba(10, 160, 50, .4); }
+        .notice.error { background: rgba(160, 20, 20, .4); border-color: rgba(200, 40, 40, .5); }
+        .notice.info { background: rgba(0, 0, 0, .5); border-color: rgba(255,255,255,.18); }
         .hint {
           font-size: 12px;
           color: rgba(255, 255, 255, 0.7);
@@ -251,6 +267,7 @@ class HotbiteTestimonials extends HTMLElement {
               <p class="hint">Testimoni baru akan langsung muncul di deretan kartu di atas.</p>
               <button type="submit" class="submit">Kirim testimoni</button>
             </div>
+            <div class="notice hidden" aria-live="polite"></div>
           </form>
         </div>
       </section>
@@ -260,6 +277,7 @@ class HotbiteTestimonials extends HTMLElement {
     const form = s.querySelector('form')
     const submit = s.querySelector('.submit')
     const endpoint = window.__API_URL || '/api/testimonials'
+    const notice = s.querySelector('.notice')
 
     const initialCards = Array.from(track.children)
 
@@ -345,6 +363,8 @@ class HotbiteTestimonials extends HTMLElement {
       if (!name || !product || !level || !message) return
 
       submit.disabled = true
+      notice.textContent = 'Mengirim testimoni…'
+      notice.className = 'notice info'
 
       const card = document.createElement('article')
       card.className = 'card'
@@ -375,6 +395,19 @@ class HotbiteTestimonials extends HTMLElement {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
+      }).then(async res => {
+        if (!res.ok) {
+          let txt = ''
+          try { txt = await res.text() } catch {}
+          notice.textContent = txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status)
+          notice.className = 'notice error'
+          return
+        }
+        notice.textContent = 'Berhasil kirim testimoni'
+        notice.className = 'notice success'
+      }).catch(err => {
+        notice.textContent = 'Gagal kirim: ' + (err && err.message || 'unknown')
+        notice.className = 'notice error'
       }).finally(() => {
         setTimeout(() => {
           fetch(endpoint)
@@ -388,6 +421,8 @@ class HotbiteTestimonials extends HTMLElement {
                 renderFromItems(items)
               }
               setupMarquee()
+              notice.textContent = 'Data testimoni diperbarui'
+              notice.className = 'notice success'
             })
             .catch(() => {})
         }, 400)

@@ -17,13 +17,13 @@ export default async function handler(req, res) {
         return
       }
       const r = await fetch(url)
-      if (!r.ok) throw new Error('Bad response')
+      if (!r.ok) throw new Error('Bad response ' + r.status)
       const data = await r.json()
       const items = Array.isArray(data.items) ? data.items : []
       res.status(200).json({ items })
       return
-    } catch {
-      res.status(500).json({ error: 'Failed to load' })
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to load', details: String(err && err.message || err) })
       return
     }
   }
@@ -54,8 +54,8 @@ export default async function handler(req, res) {
       })
       res.status(200).json({ status: 'ok', item: stored })
       return
-    } catch {
-      res.status(500).json({ error: 'Failed to save' })
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to save', details: String(err && err.message || err) })
       return
     }
 
