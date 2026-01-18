@@ -259,7 +259,7 @@ class HotbiteTestimonials extends HTMLElement {
     const track = s.querySelector('.track')
     const form = s.querySelector('form')
     const submit = s.querySelector('.submit')
-    const endpoint = '/api/testimonials'
+    const endpoint = window.__API_URL || '/api/testimonials'
 
     const initialCards = Array.from(track.children)
 

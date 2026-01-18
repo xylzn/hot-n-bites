@@ -12,15 +12,14 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      if (url) {
-        const r = await fetch(url)
-        if (!r.ok) throw new Error('Bad response')
-        const data = await r.json()
-        const items = Array.isArray(data.items) ? data.items : []
-        res.status(200).json({ items })
+      if (!url) {
+        res.status(500).json({ error: 'Missing APPS_SCRIPT_URL' })
         return
       }
-      const items = []
+      const r = await fetch(url)
+      if (!r.ok) throw new Error('Bad response')
+      const data = await r.json()
+      const items = Array.isArray(data.items) ? data.items : []
       res.status(200).json({ items })
       return
     } catch {
@@ -44,13 +43,15 @@ export default async function handler(req, res) {
 
     const stored = { name, product, level, message, createdAt }
     try {
-      if (url) {
-        await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(stored)
-        })
+      if (!url) {
+        res.status(500).json({ error: 'Missing APPS_SCRIPT_URL' })
+        return
       }
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(stored)
+      })
       res.status(200).json({ status: 'ok', item: stored })
       return
     } catch {
