@@ -375,7 +375,23 @@ class HotbiteTestimonials extends HTMLElement {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
-      }).catch(() => {})
+      }).finally(() => {
+        setTimeout(() => {
+          fetch(endpoint)
+            .then(res => {
+              if (!res.ok) throw new Error()
+              return res.json()
+            })
+            .then(data => {
+              const items = Array.isArray(data.items) ? data.items : []
+              if (items.length) {
+                renderFromItems(items)
+              }
+              setupMarquee()
+            })
+            .catch(() => {})
+        }, 400)
+      })
 
       form.reset()
       submit.disabled = false

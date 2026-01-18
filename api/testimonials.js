@@ -8,35 +8,25 @@ export default async function handler(req, res) {
     return
   }
 
+  const url = process.env.APPS_SCRIPT_URL
+
   if (req.method === 'GET') {
-    const items = [
-      {
-        name: 'Rani \u2013 Teknologi Informasi',
-        product: 'Cicos Seblak Bowl',
-        level: 'Medium Rush',
-        message: 'Pedasnya pas buat nugas malam-malam, crunchy-nya bikin tangan tidak berhenti ngambil.'
-      },
-      {
-        name: 'Dimas \u2013 Sistem Informasi',
-        product: 'Tulang Rangu Pedas',
-        level: 'Hot Burst',
-        message: 'Kuahnya kental, tulangnya lembut. Wajib siap satu gelas es teh.'
-      },
-      {
-        name: 'Nia \u2013 Desain Komunikasi Visual',
-        product: 'Cicos Seblak Bowl',
-        level: 'Mild Breeze',
-        message: 'Level aman buat yang suka seblak tapi tidak kuat pedas.'
-      },
-      {
-        name: 'Farhan \u2013 Manajemen',
-        product: 'Tulang Rangu Pedas',
-        level: 'Inferno Zone',
-        message: 'Pas untuk konten challenge bareng teman sekos. Pedas tapi nagih.'
+    try {
+      if (url) {
+        const r = await fetch(url)
+        if (!r.ok) throw new Error('Bad response')
+        const data = await r.json()
+        const items = Array.isArray(data.items) ? data.items : []
+        res.status(200).json({ items })
+        return
       }
-    ]
-    res.status(200).json({ items })
-    return
+      const items = []
+      res.status(200).json({ items })
+      return
+    } catch {
+      res.status(500).json({ error: 'Failed to load' })
+      return
+    }
   }
 
   if (req.method === 'POST') {
@@ -53,11 +43,24 @@ export default async function handler(req, res) {
     }
 
     const stored = { name, product, level, message, createdAt }
+    try {
+      if (url) {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(stored)
+        })
+      }
+      res.status(200).json({ status: 'ok', item: stored })
+      return
+    } catch {
+      res.status(500).json({ error: 'Failed to save' })
+      return
+    }
 
-    res.status(200).json({ status: 'ok', item: stored })
+    res.status(200).json({ status: 'ok' })
     return
   }
 
   res.status(405).json({ error: 'Method not allowed' })
 }
-
