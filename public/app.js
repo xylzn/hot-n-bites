@@ -1,0 +1,8 @@
+import './components/navbar.js'
+import './components/hero.js'
+import './components/highlights.js'
+import './components/menu.js'
+import './components/about.js'
+import './components/location.js'
+import './components/cta.js'
+import './components/footer.js'

@@ -1,0 +1,24 @@
+:root {
+  --burnt: #7A1E12;
+  --chili: #B22A18;
+  --blood-orange: #D44513;
+  --carrot: #EF6C0F;
+  --tangerine: #F78513;
+  --sun: #F4A018;
+  --cheese: #F2C300;
+
+  --bg: var(--carrot);
+  --bg-accent: var(--sun);
+  --text: #111111;
+  --text-invert: #ffffff;
+}
+
+body {
+  font-family: 'Poppins';
+  overflow-x: hidden;
+}
+
+img {
+  user-select: none;
+  pointer-events: none;
+}
