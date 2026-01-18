@@ -7,15 +7,19 @@
   --sun: #F4A018;
   --cheese: #F2C300;
 
-  --bg: var(--carrot);
-  --bg-accent: var(--sun);
+  --bg: #1a1a1a;
+  --bg-alt: rgba(255, 255, 255, 0.06);
   --text: #111111;
+  --text-soft: rgba(17, 17, 17, 0.78);
   --text-invert: #ffffff;
+  --primary: #ff4b2b;
+  --accent: #ff9f0a;
 }
 
 body {
   font-family: 'Poppins';
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 img {

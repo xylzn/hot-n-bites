@@ -4,22 +4,131 @@ class HotbiteLocation extends HTMLElement {
     const s = this.attachShadow({mode:"closed"})
     s.innerHTML = `
       <style>
-        .wrap { padding:100px 24px; max-width:1200px; margin:auto; }
-        .title { font-weight:800; font-size:28px; margin-bottom:20px; }
-        .grid { display:flex; gap:20px; flex-wrap:wrap; margin-top:14px; }
-        .item { display:flex; align-items:center; gap:8px; font-size:15px; }
-        img { width:24px; height:24px; }
+        .wrap { padding:100px 24px 110px; max-width:1200px; margin:auto; }
+        .title { font-weight:800; font-size:28px; margin-bottom:10px; color:var(--text-invert); }
+        .subtitle { font-size:14px; color:rgba(255,255,255,.8); margin-bottom:22px; }
+        .row {
+          display:flex;
+          flex-wrap:wrap;
+          gap:20px;
+          align-items:flex-start;
+        }
+        .col {
+          flex:1;
+          min-width:240px;
+        }
+        .map {
+          width:100%;
+          min-height:260px;
+          border-radius:18px;
+          border:1px solid rgba(255,255,255,.15);
+          background:radial-gradient(circle at top left, rgba(255,159,10,.2), rgba(0,0,0,.9));
+          box-shadow:0 20px 40px rgba(0,0,0,.85);
+          overflow:hidden;
+        }
+        .badge {
+          display:inline-flex;
+          align-items:center;
+          gap:8px;
+          padding:4px 10px;
+          border-radius:9999px;
+          background:rgba(0,0,0,.45);
+          border:1px solid rgba(255,255,255,.18);
+          font-size:11px;
+          color:rgba(255,255,255,.82);
+          margin-bottom:10px;
+        }
+        .badgeDot {
+          width:8px;
+          height:8px;
+          border-radius:9999px;
+          background:var(--accent);
+          box-shadow:0 0 0 6px rgba(255,159,10,.26);
+        }
+        .whatsappCard {
+          border-radius:18px;
+          padding:16px 18px 18px;
+          background:rgba(0,0,0,.75);
+          border:1px solid rgba(255,255,255,.18);
+          box-shadow:0 18px 40px rgba(0,0,0,.85);
+          color:rgba(255,255,255,.9);
+          font-size:13px;
+        }
+        .whatsappRow {
+          display:flex;
+          align-items:center;
+          gap:10px;
+          margin-top:8px;
+        }
+        .whatsappIcon {
+          width:22px;
+          height:22px;
+          border-radius:9999px;
+        }
+        .waLink {
+          display:inline-flex;
+          align-items:center;
+          gap:6px;
+          margin-top:10px;
+          font-size:13px;
+          color:rgba(255,255,255,.92);
+          text-decoration:none;
+        }
+        .waLink span {
+          padding:4px 8px;
+          border-radius:9999px;
+          background:rgba(0,0,0,.6);
+          border:1px solid rgba(255,255,255,.2);
+          font-size:11px;
+        }
+        @media (max-width: 768px) {
+          .wrap {
+            padding-bottom:80px;
+          }
+        }
       </style>
 
       <section class="wrap" id="location">
-        <div class="title">Lokasi & Platform</div>
-        <div>Offline: Universitas Teknologi Bandung</div>
+        <div class="title">Lokasi & kontak order</div>
+        <div class="subtitle">Kamu bisa datang langsung ke spot kampus atau order via WhatsApp untuk ambil di tempat.</div>
 
-        <div class="grid" style="margin-top:20px;">
-          <div class="item"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png"> TikTokShop</div>
-          <div class="item"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968574.png"> ShopeeFood</div>
-          <div class="item"><img src="https://cdn-icons-png.flaticon.com/512/6124/6124992.png"> GoFood</div>
-          <div class="item"><img src="https://cdn-icons-png.flaticon.com/512/6124/6124995.png"> GrabFood</div>
+        <div class="row">
+          <div class="col">
+            <div class="badge">
+              <span class="badgeDot"></span>
+              <span>Offline</span>
+            </div>
+            <div class="map">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.0000000000005!2d107.60000000000001!3d-6.900000000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sHot%20N'%20Bite!5e0!3m2!1sid!2sid!4v1700000000000"
+                width="100%"
+                height="auto"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+          </div>
+          <div class="col">
+            <div class="badge">
+              <span class="badgeDot"></span>
+              <span>WhatsApp</span>
+            </div>
+            <div class="whatsappCard">
+              <div>Chat langsung untuk tanya stok menu, level pedas, atau pre-order sebelum jam kuliah selesai.</div>
+              <div class="whatsappRow">
+                <img class="whatsappIcon" src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="">
+                <div>
+                  <div>WhatsApp</div>
+                  <div style="font-size:12px; opacity:.9;">+62 812-0000-0000</div>
+                </div>
+              </div>
+              <a class="waLink" href="https://wa.me/6281200000000" target="_blank" rel="noreferrer">
+                <span>Chat sekarang</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     `
