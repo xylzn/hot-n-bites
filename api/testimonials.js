@@ -12,13 +12,20 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      if (!url) {
-        res.status(500).json({ error: 'Missing APPS_SCRIPT_URL' })
+      if (!url || !url.startsWith('https://script.google.com') || !url.includes('/exec')) {
+        res.status(400).json({ error: 'Missing or invalid APPS_SCRIPT_URL' })
         return
       }
-      const r = await fetch(url)
+      const r = await fetch(url, { headers: { 'Accept': 'application/json' } })
       if (!r.ok) throw new Error('Bad response ' + r.status)
-      const data = await r.json()
+      const ct = r.headers.get('content-type') || ''
+      let data
+      if (ct.includes('application/json')) {
+        data = await r.json()
+      } else {
+        const txt = await r.text()
+        throw new Error('Non-JSON response: ' + (txt || '').slice(0, 200))
+      }
       const items = Array.isArray(data.items) ? data.items : []
       res.status(200).json({ items })
       return
@@ -29,7 +36,13 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const body = req.body || {}
+    const bodyRaw = req.body
+    let body = {}
+    if (typeof bodyRaw === 'string') {
+      try { body = JSON.parse(bodyRaw) } catch { body = {} }
+    } else {
+      body = bodyRaw || {}
+    }
     const name = body.name || ''
     const product = body.product || ''
     const level = body.level || ''
@@ -43,16 +56,30 @@ export default async function handler(req, res) {
 
     const stored = { name, product, level, message, createdAt }
     try {
-      if (!url) {
-        res.status(500).json({ error: 'Missing APPS_SCRIPT_URL' })
+      if (!url || !url.startsWith('https://script.google.com') || !url.includes('/exec')) {
+        res.status(400).json({ error: 'Missing or invalid APPS_SCRIPT_URL' })
         return
       }
-      await fetch(url, {
+      const r = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(stored)
       })
-      res.status(200).json({ status: 'ok', item: stored })
+      if (!r.ok) {
+        let txt = ''
+        try { txt = await r.text() } catch {}
+        res.status(500).json({ error: 'Apps Script error', details: txt || ('status ' + r.status) })
+        return
+      }
+      const ct = r.headers.get('content-type') || ''
+      if (ct.includes('application/json')) {
+        const data = await r.json()
+        res.status(200).json(data)
+        return
+      } else {
+        res.status(200).json({ status: 'ok', item: stored })
+        return
+      }
       return
     } catch (err) {
       res.status(500).json({ error: 'Failed to save', details: String(err && err.message || err) })
@@ -64,4 +91,3 @@ export default async function handler(req, res) {
   }
 
   res.status(405).json({ error: 'Method not allowed' })
-}

@@ -330,8 +330,12 @@ class HotbiteTestimonials extends HTMLElement {
 
     const loadFromSheet = () => {
       fetch(endpoint)
-        .then(res => {
-          if (!res.ok) throw new Error()
+        .then(async res => {
+          if (!res.ok) {
+            let txt = ''
+            try { txt = await res.text() } catch {}
+            throw new Error(txt || ('status ' + res.status))
+          }
           return res.json()
         })
         .then(data => {
@@ -343,9 +347,11 @@ class HotbiteTestimonials extends HTMLElement {
           }
           setupMarquee()
         })
-        .catch(() => {
+        .catch(err => {
           renderFallback()
           setupMarquee()
+          notice.textContent = 'Gagal memuat data: ' + (err && err.message || 'unknown')
+          notice.className = 'notice error'
         })
     }
 
@@ -424,7 +430,12 @@ class HotbiteTestimonials extends HTMLElement {
               notice.textContent = 'Data testimoni diperbarui'
               notice.className = 'notice success'
             })
-            .catch(() => {})
+            .catch(async err => {
+              let msg = ''
+              try { msg = await err?.message } catch {}
+              notice.textContent = 'Gagal perbarui data: ' + (msg || 'unknown')
+              notice.className = 'notice error'
+            })
         }, 400)
       })
 
