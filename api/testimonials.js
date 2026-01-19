@@ -3,6 +3,39 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
+  const fetchCompat = async (url, options = {}) => {
+    if (typeof fetch === 'function') return fetch(url, options)
+    const https = await import('node:https')
+    const u = new URL(url)
+    const opts = {
+      method: options.method || 'GET',
+      headers: options.headers || {},
+      hostname: u.hostname,
+      path: u.pathname + (u.search || ''),
+      port: u.port || (u.protocol === 'https:' ? 443 : 80)
+    }
+    return new Promise((resolve, reject) => {
+      const req2 = https.default.request(opts, res2 => {
+        const chunks = []
+        res2.on('data', d => chunks.push(d))
+        res2.on('end', () => {
+          const bodyTxt = Buffer.concat(chunks).toString('utf8')
+          const headers = res2.headers || {}
+          resolve({
+            ok: (res2.statusCode || 0) >= 200 && (res2.statusCode || 0) < 300,
+            status: res2.statusCode || 0,
+            headers: { get: k => headers[String(k).toLowerCase()] || '' },
+            json: async () => JSON.parse(bodyTxt),
+            text: async () => bodyTxt
+          })
+        })
+      })
+      req2.on('error', reject)
+      if (options.body) req2.write(options.body)
+      req2.end()
+    })
+  }
+
   if (req.method === 'OPTIONS') {
     res.status(200).end()
     return
@@ -16,7 +49,7 @@ export default async function handler(req, res) {
         res.status(400).json({ error: 'Missing or invalid APPS_SCRIPT_URL' })
         return
       }
-      const r = await fetch(url, { headers: { 'Accept': 'application/json' } })
+      const r = await fetchCompat(url, { headers: { 'Accept': 'application/json' } })
       if (!r.ok) throw new Error('Bad response ' + r.status)
       const ct = r.headers.get('content-type') || ''
       let data
@@ -60,7 +93,7 @@ export default async function handler(req, res) {
         res.status(400).json({ error: 'Missing or invalid APPS_SCRIPT_URL' })
         return
       }
-      const r = await fetch(url, {
+      const r = await fetchCompat(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(stored)
@@ -70,7 +103,7 @@ export default async function handler(req, res) {
         try { txt = await r.text() } catch {}
         if ((txt && txt.includes('FUNCTION_INVOCATION_FAILED')) || r.status >= 500) {
           const formBody = new URLSearchParams(stored).toString()
-          const r2 = await fetch(url, {
+          const r2 = await fetchCompat(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formBody
