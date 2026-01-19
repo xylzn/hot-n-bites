@@ -68,8 +68,32 @@ export default async function handler(req, res) {
       if (!r.ok) {
         let txt = ''
         try { txt = await r.text() } catch {}
-        res.status(500).json({ error: 'Apps Script error', details: txt || ('status ' + r.status) })
-        return
+        if ((txt && txt.includes('FUNCTION_INVOCATION_FAILED')) || r.status >= 500) {
+          const formBody = new URLSearchParams(stored).toString()
+          const r2 = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formBody
+          })
+          if (!r2.ok) {
+            let txt2 = ''
+            try { txt2 = await r2.text() } catch {}
+            res.status(500).json({ error: 'Apps Script error', details: txt2 || ('status ' + r2.status) })
+            return
+          }
+          const ct2 = r2.headers.get('content-type') || ''
+          if (ct2.includes('application/json')) {
+            const data2 = await r2.json()
+            res.status(200).json(data2)
+            return
+          } else {
+            res.status(200).json({ status: 'ok', item: stored })
+            return
+          }
+        } else {
+          res.status(500).json({ error: 'Apps Script error', details: txt || ('status ' + r.status) })
+          return
+        }
       }
       const ct = r.headers.get('content-type') || ''
       if (ct.includes('application/json')) {
