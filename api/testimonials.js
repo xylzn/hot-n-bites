@@ -1,11 +1,11 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
   const fetchCompat = async (url, options = {}) => {
     if (typeof fetch === 'function') return fetch(url, options)
-    const https = await import('https')
+    const https = require('https')
     const u = new URL(url)
     const opts = {
       method: options.method || 'GET',
