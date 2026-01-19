@@ -111,7 +111,7 @@ class HotbiteLocation extends HTMLElement {
                 allowfullscreen=""
                 loading="lazy">
               </iframe>
-               <div class="subtitle font-bold">Universitas Teknologi Bandung.</div>
+               <div class="subtitle font-bold mt-3">Universitas Teknologi Bandung.</div>
             </div>
           </div>
           <div class="col">
