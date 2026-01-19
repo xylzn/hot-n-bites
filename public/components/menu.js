@@ -107,7 +107,7 @@ class HotbiteMenu extends HTMLElement {
         <div class="grid">
           <div class="card">
             <div class="cardInner">
-              <img class="img" src="../assets/placeholder.png">
+              <img class="img" src="../assets/cicos.jpeg">
               <div class="name">Cicos Seblak Bowl</div>
               <div class="desc">Campuran keripik dan seblak kering gurih pedas, tekstur crunchy nagih.</div>
               <div class="metaRow">
@@ -120,7 +120,7 @@ class HotbiteMenu extends HTMLElement {
 
           <div class="card">
             <div class="cardInner">
-              <img class="img" src="../assets/placeholder.png">
+              <img class="img" src="../assets/Tulang Rangu.jpegt">
               <div class="name">Tulang Rangu Pedas</div>
               <div class="desc">Tulang rangu lembut dengan kuah seblak kental, cocok buat pecinta pedas berat.</div>
               <div class="metaRow">

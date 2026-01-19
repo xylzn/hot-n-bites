@@ -7,21 +7,32 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-[#1A0B0B] via-[#2B0F0F] to-[#3F130D] text-[#111] font-[Poppins] antialiased">
 
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
 
-  <hotbite-navbar></hotbite-navbar>
-  <hotbite-hero></hotbite-hero>
-  <hotbite-highlights></hotbite-highlights>
-  <hotbite-menu></hotbite-menu>
-  <hotbite-spice-levels></hotbite-spice-levels>
-  <hotbite-about></hotbite-about>
-  <hotbite-location></hotbite-location>
-  <hotbite-testimonials></hotbite-testimonials>
-  <hotbite-footer></hotbite-footer>
+  <hotbite-navbar data-aos="fade-down"></hotbite-navbar>
+  <hotbite-hero data-aos="fade-up"></hotbite-hero>
+  <hotbite-highlights data-aos="fade-up"></hotbite-highlights>
+  <hotbite-menu data-aos="fade-up"></hotbite-menu>
+  <hotbite-spice-levels data-aos="fade-up"></hotbite-spice-levels>
+  <hotbite-about data-aos="fade-up"></hotbite-about>
+  <hotbite-location data-aos="fade-up"></hotbite-location>
+  <hotbite-testimonials data-aos="fade-up"></hotbite-testimonials>
+  <hotbite-footer data-aos="fade-up"></hotbite-footer>
 
 <script type="module" src="app.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  window.addEventListener('load', function () {
+    try { AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true }); } catch {}
+    var l = document.getElementById('loader'); if (l) l.style.display = 'none'
+  })
+</script>
 
 </body>
 </html>

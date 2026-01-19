@@ -70,7 +70,7 @@ class HotbiteAbout extends HTMLElement {
             <div class="pill">Harga ramah mahasiswa</div>
           </div>
         </div>
-        <img class="image" src="./assets/doodles.svg" width="260">
+         <img class="image" src="./assets/doodles.svg" width="260">
       </section>
     `
   }

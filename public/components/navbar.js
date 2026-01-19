@@ -33,16 +33,13 @@ class HotbiteNavbar extends HTMLElement {
           color: var(--text-invert);
           text-decoration: none;
         }
-        .brandMark {
-          width: 26px;
-          height: 26px;
+        .brandLogo {
+          width: 28px;
+          height: 28px;
           border-radius: 9999px;
-          background: conic-gradient(from 180deg, #ff4b2b, #ff9f0a, #ffd60a, #ff4b2b);
           box-shadow: 0 0 0 6px rgba(255, 75, 43, 0.24);
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:14px;
+          object-fit: cover;
+          display:block;
         }
         .links {
           display: flex;
@@ -127,13 +124,14 @@ class HotbiteNavbar extends HTMLElement {
       <div class="navShell">
         <nav class="nav">
           <a class="brand" href="#beranda">
-            <div class="brandMark">🌶️</div>
+            <img class="brandLogo" src="./assets/Hot n Bites.jpeg" alt="Hot N’ Bite">
             <span>Hot N’ Bite</span>
           </a>
           <div class="links">
             <a class="link" href="#beranda">Beranda</a>
             <a class="link" href="#about">Tentang</a>
             <a class="link" href="#menu">Menu</a>
+            <a class="link" href="#testimoni">Testimoni</a>
             <a class="link linkPrimary" href="#location">Lokasi</a>
           </div>
           <button class="toggle" aria-label="Buka navigasi">☰</button>
@@ -143,6 +141,7 @@ class HotbiteNavbar extends HTMLElement {
           <a class="link" href="#about">Tentang</a>
           <a class="link" href="#menu">Menu</a>
           <a class="link" href="#location">Lokasi</a>
+          <a class="link" href="#testimoni">Testimoni</a>
         </div>
       </div>
     `

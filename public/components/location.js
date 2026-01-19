@@ -100,14 +100,14 @@ class HotbiteLocation extends HTMLElement {
             </div>
             <div class="map">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.0000000000005!2d107.60000000000001!3d-6.900000000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sHot%20N'%20Bite!5e0!3m2!1sid!2sid!4v1700000000000"
-                width="100%"
-                height="auto"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-              </iframe>
+  src="https://maps.google.com/maps?q=-6.905977,107.613144&output=embed"
+  width="100%"
+  height="100%"
+  style="border:0;"
+  allowfullscreen=""
+  loading="lazy">
+</iframe>
+
             </div>
           </div>
           <div class="col">

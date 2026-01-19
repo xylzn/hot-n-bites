@@ -179,10 +179,6 @@ class HotbiteHero extends HTMLElement {
           <div class="sub">Racikan bumbu seblak khas Jawa Barat, level pedas bisa diatur, plating kece buat konten, harga tetap anak kampus.</div>
           <div>
             <a class="cta" href="https://wa.me/6285864214811">Beli Sekarang!🔥</a>
-            <a class="ctaSecondary" href="#level-pedas">
-              <span class="ctaSecondaryDot"></span>
-              <span>Lihat level pedas</span>
-            </a>
           </div>
           <div class="stats">
             <div><span class="statNumber">+500</span> porsi terjual di area kampus</div>
