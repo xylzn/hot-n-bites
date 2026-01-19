@@ -149,6 +149,8 @@ class HotbiteNavbar extends HTMLElement {
     const shell = shadow.querySelector('.navShell')
     const toggle = shadow.querySelector('.toggle')
     const mobileLinks = shadow.querySelectorAll('.mobileLinks .link')
+    const desktopLinks = shadow.querySelectorAll('.links .link')
+    const brandLink = shadow.querySelector('.brand')
 
     toggle.addEventListener('click', () => {
       shell.classList.toggle('open')
@@ -158,6 +160,34 @@ class HotbiteNavbar extends HTMLElement {
       link.addEventListener('click', () => {
         shell.classList.remove('open')
       })
+    })
+
+    const go = sel => {
+      const target = document.querySelector(sel)
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    const mapHref = h => {
+      if (h === '#beranda') return 'hotbite-hero'
+      if (h === '#about') return 'hotbite-about'
+      if (h === '#menu') return 'hotbite-menu'
+      if (h === '#location') return 'hotbite-location'
+      if (h === '#testimoni') return 'hotbite-testimonials'
+      return null
+    }
+    ;[...desktopLinks, ...mobileLinks].forEach(a => {
+      a.addEventListener('click', e => {
+        const href = a.getAttribute('href')
+        const tag = mapHref(href)
+        if (tag) {
+          e.preventDefault()
+          go(tag)
+          shell.classList.remove('open')
+        }
+      })
+    })
+    brandLink.addEventListener('click', e => {
+      e.preventDefault()
+      go('hotbite-hero')
     })
   }
 }
