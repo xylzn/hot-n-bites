@@ -73,7 +73,7 @@ class HotbiteAbout extends HTMLElement {
             <div class="pill">Harga ramah mahasiswa</div>
           </div>
         </div>
-         <img class="image" src="./assets/placeholder.png" width="220" alt="Hot N’ Bite Logo">
+         <img class="image" src="./assets/Hot n Bites.jpeg" width="220" alt="Hot N’ Bite Logo">
       </section>
     `
   }

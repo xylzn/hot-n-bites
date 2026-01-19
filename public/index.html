@@ -18,22 +18,26 @@
     </div>
   </div>
 
-  <hotbite-navbar data-aos="fade-down"></hotbite-navbar>
-  <hotbite-hero data-aos="fade-up"></hotbite-hero>
-  <hotbite-highlights data-aos="fade-up"></hotbite-highlights>
-  <hotbite-menu data-aos="fade-up"></hotbite-menu>
-  <hotbite-spice-levels data-aos="fade-up"></hotbite-spice-levels>
-  <hotbite-about data-aos="fade-up"></hotbite-about>
-  <hotbite-location data-aos="fade-up"></hotbite-location>
-  <hotbite-testimonials data-aos="fade-up"></hotbite-testimonials>
-  <hotbite-footer data-aos="fade-up"></hotbite-footer>
+  <hotbite-navbar data-aos="fade-down" data-aos-duration="600" data-aos-easing="ease-out-cubic"></hotbite-navbar>
+  <hotbite-hero data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-hero>
+  <hotbite-highlights data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-highlights>
+  <hotbite-menu data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-menu>
+  <hotbite-spice-levels data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-spice-levels>
+  <hotbite-about data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-about>
+  <hotbite-location data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-location>
+  <hotbite-testimonials data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-out-cubic"></hotbite-testimonials>
+  <hotbite-footer data-aos="fade-up" data-aos-duration="600" data-aos-easing="ease-out-cubic"></hotbite-footer>
 
 <script type="module" src="app.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
   window.addEventListener('load', function () {
     try { AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true }); } catch {}
-    var l = document.getElementById('loader'); if (l) l.style.display = 'none'
+    var l = document.getElementById('loader');
+    if (l) {
+      l.classList.add('fade');
+      setTimeout(function(){ l.style.display = 'none' }, 350);
+    }
   })
 </script>
 

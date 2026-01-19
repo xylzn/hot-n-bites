@@ -6,6 +6,8 @@ class HotbiteLocation extends HTMLElement {
       <style>
         .wrap { padding:100px 24px 110px; max-width:1200px; margin:auto; }
         .title { font-weight:800; font-size:28px; margin-bottom:10px; color:var(--text-invert); }
+        .titleRow { display:flex; align-items:center; gap:10px; }
+        .titleIcon { width:28px; height:28px; border-radius:9999px; object-fit:cover; box-shadow:0 0 0 6px rgba(255,75,43,.24); }
         .subtitle { font-size:14px; color:rgba(255,255,255,.8); margin-bottom:22px; }
         .row {
           display:flex;
@@ -26,6 +28,7 @@ class HotbiteLocation extends HTMLElement {
           box-shadow:0 20px 40px rgba(0,0,0,.85);
           overflow:hidden;
         }
+        .map iframe { width:100%; height:220px; display:block; }
         .badge {
           display:inline-flex;
           align-items:center;
@@ -89,7 +92,10 @@ class HotbiteLocation extends HTMLElement {
       </style>
 
       <section class="wrap" id="location">
-        <div class="title">Lokasi & kontak order</div>
+        <div class="titleRow">
+          <img class="titleIcon" src="assets/placeholder.png" alt="Hot N’ Bite">
+          <div class="title">Lokasi & kontak order</div>
+        </div>
         <div class="subtitle">Kamu bisa datang langsung ke spot kampus atau order via WhatsApp untuk ambil di tempat.</div>
 
         <div class="row">
@@ -100,14 +106,11 @@ class HotbiteLocation extends HTMLElement {
             </div>
             <div class="map">
               <iframe
-  src="https://maps.google.com/maps?q=-6.905977,107.613144&output=embed"
-  width="100%"
-  height="100%"
-  style="border:0;"
-  allowfullscreen=""
-  loading="lazy">
-</iframe>
-
+                src="https://maps.google.com/maps?q=-6.938860,107.617300&output=embed"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy">
+              </iframe>
             </div>
           </div>
           <div class="col">
@@ -120,11 +123,11 @@ class HotbiteLocation extends HTMLElement {
               <div class="whatsappRow">
                 <img class="whatsappIcon" src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="">
                 <div>
-                  <div>WhatsApp</div>
-                  <div style="font-size:12px; opacity:.9;">+62 812-0000-0000</div>
+                  <div>Jiya Zara Mutiara - Bisnis Digital</div>
+                  <div style="font-size:12px; opacity:.9;">+62 858-6421-4811</div>
                 </div>
               </div>
-              <a class="waLink" href="https://wa.me/6281200000000" target="_blank" rel="noreferrer">
+              <a class="waLink" href="https://wa.me/6285864214811" target="_blank" rel="noreferrer">
                 <span>Chat sekarang</span>
               </a>
             </div>
