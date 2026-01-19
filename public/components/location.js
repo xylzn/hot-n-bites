@@ -27,6 +27,9 @@ class HotbiteLocation extends HTMLElement {
           background:radial-gradient(circle at top left, rgba(255,159,10,.2), rgba(0,0,0,.9));
           box-shadow:0 20px 40px rgba(0,0,0,.85);
           overflow:hidden;
+          text-align: center;
+          font-weight: bold;
+          gap : 10px;
         }
         .map iframe { width:100%; height:220px; display:block; }
         .badge {
@@ -111,7 +114,7 @@ class HotbiteLocation extends HTMLElement {
                 allowfullscreen=""
                 loading="lazy">
               </iframe>
-               <div class="subtitle font-bold p-3">Universitas Teknologi Bandung.</div>
+              <p>Universitas Teknologi Bandung</p>
             </div>
           </div>
           <div class="col">
