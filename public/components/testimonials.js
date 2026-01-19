@@ -16,6 +16,22 @@ class HotbiteTestimonials extends HTMLElement {
           gap: 20px;
           margin-bottom: 26px;
         }
+        .counter {
+          margin-left: auto;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 10px;
+          border-radius: 9999px;
+          background: rgba(0,0,0,.5);
+          border: 1px solid rgba(255,255,255,.16);
+          color: rgba(255,255,255,.9);
+          font-size: 12px;
+        }
+        .count {
+          font-weight: 700;
+          color: rgba(255, 214, 10, 0.95);
+        }
         .title {
           font-size: 28px;
           font-weight: 800;
@@ -41,6 +57,7 @@ class HotbiteTestimonials extends HTMLElement {
           align-items: stretch;
           gap: 16px;
           will-change: transform;
+          overflow-x: hidden;
         }
         .track.auto {
           animation: scrollLeft 30s linear infinite;
@@ -194,9 +211,23 @@ class HotbiteTestimonials extends HTMLElement {
           .title {
             font-size: 24px;
           }
+          .counter {
+            margin-left: 0;
+          }
           .card {
             flex: 0 0 260px;
             max-width: 260px;
+          }
+          .track {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 6px;
+          }
+          .card {
+            scroll-snap-align: start;
+          }
+          .track.auto {
+            animation: none;
           }
         }
       </style>
@@ -205,6 +236,7 @@ class HotbiteTestimonials extends HTMLElement {
         <div class="header">
           <div class="title">Cerita mereka setelah kepedesan.</div>
           <p class="subtitle">Testimoni dari teman-teman kampus yang sudah nyobain berbagai level pedas Hot N’ Bite.</p>
+          <div class="counter" aria-live="polite"><span class="count">0</span> testimoni</div>
         </div>
 
         <div class="marqueeShell">
@@ -280,10 +312,14 @@ class HotbiteTestimonials extends HTMLElement {
     const notice = s.querySelector('.notice')
 
     const initialCards = Array.from(track.children)
+    const countEl = s.querySelector('.count')
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches
+    const setCount = n => { try { countEl.textContent = String(n || 0) } catch {} }
 
     const setupMarquee = () => {
       const cards = Array.from(track.children)
-      if (cards.length > 3) {
+      track.classList.remove('auto')
+      if (cards.length > 3 && !isMobile()) {
         const clone = cards.map(card => card.cloneNode(true))
         clone.forEach(node => track.appendChild(node))
         track.classList.add('auto')
@@ -345,6 +381,7 @@ class HotbiteTestimonials extends HTMLElement {
           } else {
             renderFallback()
           }
+          setCount(items.length)
           setupMarquee()
         })
         .catch(err => {
@@ -352,6 +389,7 @@ class HotbiteTestimonials extends HTMLElement {
           setupMarquee()
           notice.textContent = 'Gagal memuat data: ' + (err && err.message || 'unknown')
           notice.className = 'notice error'
+          setCount(0)
         })
     }
 
@@ -427,6 +465,7 @@ class HotbiteTestimonials extends HTMLElement {
                 renderFromItems(items)
               }
               setupMarquee()
+              setCount(items.length)
               notice.textContent = 'Data testimoni diperbarui'
               notice.className = 'notice success'
             })
@@ -435,6 +474,7 @@ class HotbiteTestimonials extends HTMLElement {
               try { msg = await err?.message } catch {}
               notice.textContent = 'Gagal perbarui data: ' + (msg || 'unknown')
               notice.className = 'notice error'
+              // Biarkan count tidak berubah saat gagal refresh
             })
         }, 400)
       })
