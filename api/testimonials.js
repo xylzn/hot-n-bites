@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   const fetchCompat = async (url, options = {}) => {
     if (typeof fetch === 'function') return fetch(url, options)
-    const https = await import('node:https')
+    const https = await import('https')
     const u = new URL(url)
     const opts = {
       method: options.method || 'GET',
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             ok: (res2.statusCode || 0) >= 200 && (res2.statusCode || 0) < 300,
             status: res2.statusCode || 0,
             headers: { get: k => headers[String(k).toLowerCase()] || '' },
-            json: async () => JSON.parse(bodyTxt),
+            json: async () => { try { return JSON.parse(bodyTxt) } catch { return { raw: bodyTxt } } },
             text: async () => bodyTxt
           })
         })
