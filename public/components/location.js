@@ -30,9 +30,10 @@ class HotbiteLocation extends HTMLElement {
           text-align: center;
           font-weight: bold;
           gap : 10px;
+          color:rgba(255,255,255,.9);
         }
         .map p {
-        margin-top : 3vh;
+        margin-top : 1vh;
         }
         .map iframe { width:100%; height:220px; display:block; }
         .badge {
