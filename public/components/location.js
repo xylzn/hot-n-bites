@@ -31,6 +31,9 @@ class HotbiteLocation extends HTMLElement {
           font-weight: bold;
           gap : 10px;
         }
+        .map p {
+        margin-top : 3vh;
+        }
         .map iframe { width:100%; height:220px; display:block; }
         .badge {
           display:inline-flex;
