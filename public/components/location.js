@@ -106,11 +106,12 @@ class HotbiteLocation extends HTMLElement {
             </div>
             <div class="map">
               <iframe
-                src="https://maps.google.com/maps?q=-6.94128,107.60587&output=embed"
+                src="https://maps.google.com/maps?q=-6.948222,107.6011221&output=embed"
                 style="border:0;"
                 allowfullscreen=""
                 loading="lazy">
               </iframe>
+               <div class="subtitle font-bold">Universitas Teknologi Bandung.</div>
             </div>
           </div>
           <div class="col">
