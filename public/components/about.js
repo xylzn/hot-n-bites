@@ -39,9 +39,12 @@ class HotbiteAbout extends HTMLElement {
           background:rgba(0,0,0,.4);
         }
         .image {
-          max-width:260px;
+          max-width:220px;
           width:100%;
-          filter:drop-shadow(0 26px 50px rgba(0,0,0,.9));
+          border-radius:50%;
+          border: 2px solid rgba(255,255,255,.22);
+          box-shadow: 0 26px 50px rgba(0,0,0,.9);
+          object-fit: cover;
         }
         @media (max-width: 900px) {
           .wrap {
@@ -70,7 +73,7 @@ class HotbiteAbout extends HTMLElement {
             <div class="pill">Harga ramah mahasiswa</div>
           </div>
         </div>
-         <img class="image" src="./assets/doodles.svg" width="260">
+         <img class="image" src="./assets/placeholder.png" width="220" alt="Hot N’ Bite Logo">
       </section>
     `
   }

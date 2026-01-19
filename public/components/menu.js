@@ -120,7 +120,7 @@ class HotbiteMenu extends HTMLElement {
 
           <div class="card">
             <div class="cardInner">
-              <img class="img" src="../assets/Tulang Rangu.jpegt">
+              <img class="img" src="../assets/Tulang Rangu.jpeg">
               <div class="name">Tulang Rangu Pedas</div>
               <div class="desc">Tulang rangu lembut dengan kuah seblak kental, cocok buat pecinta pedas berat.</div>
               <div class="metaRow">
