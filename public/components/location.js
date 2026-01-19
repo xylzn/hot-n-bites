@@ -106,7 +106,7 @@ class HotbiteLocation extends HTMLElement {
             </div>
             <div class="map">
               <iframe
-                src="https://maps.google.com/maps?q=-6.94155,107.605594&output=embed"
+                src="https://maps.google.com/maps?q=-6.94128,107.60587&output=embed"
                 style="border:0;"
                 allowfullscreen=""
                 loading="lazy">
