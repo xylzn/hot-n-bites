@@ -178,7 +178,7 @@ class HotbiteHero extends HTMLElement {
           <div class="title">Seblak pedas aesthetic<br>buat tongkrongan kampus.</div>
           <div class="sub">Racikan bumbu seblak khas Jawa Barat, level pedas bisa diatur, plating kece buat konten, harga tetap anak kampus.</div>
           <div>
-            <a class="cta" href="https://wa.me/6285864214811">Beli Sekarang!🔥</a>
+            <a class="cta" href="https://wa.me/6285864214811?text=Saya+ingin+membeli">Beli Sekarang!🔥</a>
           </div>
           <div class="stats">
             <div><span class="statNumber">+500</span> porsi terjual di area kampus</div>

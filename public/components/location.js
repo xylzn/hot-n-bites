@@ -109,7 +109,7 @@ class HotbiteLocation extends HTMLElement {
           <div class="col">
             <div class="badge">
               <span class="badgeDot"></span>
-              <span>Offline</span>
+             <h7>Gerai Offline</h7>
             </div>
             <div class="map">
               <iframe

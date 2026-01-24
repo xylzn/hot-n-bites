@@ -57,7 +57,7 @@ class HotbiteTestimonials extends HTMLElement {
           align-items: stretch;
           gap: 16px;
           will-change: transform;
-          overflow-x: hidden;
+          overflow-x: 0;
         }
         .track.auto {
           animation: scrollLeft 30s linear infinite;
@@ -265,7 +265,7 @@ class HotbiteTestimonials extends HTMLElement {
               <div class="level">Level: Inferno Zone</div>
               <p class="message">Perfect buat konten challenge bareng temen sekos. Pedas tapi nagih.</p>
             </article>
-          </div>
+          </div> 
         </div>
 
         <div class="formWrap">
@@ -278,7 +278,12 @@ class HotbiteTestimonials extends HTMLElement {
               </div>
               <div class="field">
                 <label>Produk <span>*</span></label>
-                <input class="input" name="product" placeholder="Contoh: Cicos Seblak Bowl" required>
+               <select class="select" name="product" required>
+                  <option value="">Pilih Produk</option>
+                  <option value="Cicos Seblak Bowl">Cicos Seblak Bowl</option> 
+                  <option value="Tulang Rangu Pedas">Tulang Rangu Pedas</option>
+                  <option value="Cicos Seblak Bowl & Tulang Rangu Pedas">Cicos Seblak Bowl & Tulang Rangu Pedas</option>
+                </select>
               </div>
               <div class="field">
                 <label>Level pedas <span>*</span></label>
