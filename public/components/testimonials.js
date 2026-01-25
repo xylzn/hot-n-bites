@@ -115,23 +115,12 @@ class HotbiteTestimonials extends HTMLElement {
           margin-top: 10px;
           font-size: 13px;
           line-height: 1.5;
+          overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           position: relative;
-        }
-        .message.long::after {
-          content: '…';
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          height: 1.2em;
-          width: 30%;
-          display: block;
-          text-align: right;
-          padding-right: 10px;
-          background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
         }
         .modal {
           position: fixed;
