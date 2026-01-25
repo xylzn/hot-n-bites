@@ -91,7 +91,6 @@ class HotbiteTestimonials extends HTMLElement {
         .card.active {
           opacity: 1;
           transform: scale(1.0);
-          box-shadow: 0 18px 46px rgba(0,0,0,.9);
           border-color: rgba(255,255,255,.2);
         }
         .card.dim {
@@ -116,9 +115,9 @@ class HotbiteTestimonials extends HTMLElement {
           margin-top: 10px;
           font-size: 13px;
           line-height: 1.5;
-          overflow: hidden;
+          text-overflow: ellipsis;
           display: -webkit-box;
-          -webkit-line-clamp: 4;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           position: relative;
         }
