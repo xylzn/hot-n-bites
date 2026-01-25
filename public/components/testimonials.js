@@ -118,7 +118,7 @@ class HotbiteTestimonials extends HTMLElement {
           overflow: hidden;
           word-break: break-word;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 4;
           -webkit-box-orient: vertical;
           position: relative;
         }
@@ -135,7 +135,9 @@ class HotbiteTestimonials extends HTMLElement {
         }
         .message.expand{
         -webkit-line-clamp: unset;
+          overflow: visible;
         }
+        .message.expand.long::after { display: none; }
         .modal {
           position: fixed;
           inset: 0;
@@ -350,7 +352,7 @@ class HotbiteTestimonials extends HTMLElement {
             <div class="name mName"></div>
             <div class="level mLevel"></div>
             <p class="message mMessage"></p>
-            <span class="read-more>Lihat selengkapnya</span>
+            <span class="read-more">Lihat selengkapnya</span>
           </div>
         </div>
 
@@ -702,5 +704,7 @@ class HotbiteTestimonials extends HTMLElement {
     })
   }
 }
+
+
 
 customElements.define('hotbite-testimonials', HotbiteTestimonials)
