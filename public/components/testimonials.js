@@ -58,6 +58,21 @@ class HotbiteTestimonials extends HTMLElement {
           gap: 16px;
           will-change: transform;
           overflow-x: 0;
+          scrollbar-width: thin;
+          scrollbar-color: var(--accent) rgba(255,255,255,.08);
+        }
+        .track::-webkit-scrollbar { height: 10px; }
+        .track::-webkit-scrollbar-track {
+          background: rgba(255,255,255,.08);
+          border-radius: 9999px;
+        }
+        .track::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, var(--primary), var(--accent));
+          border-radius: 9999px;
+          border: 2px solid rgba(0,0,0,.5);
+        }
+        .track::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(135deg, var(--accent), var(--primary));
         }
         .track.auto {
           animation: scrollLeft 30s linear infinite;
@@ -167,32 +182,6 @@ class HotbiteTestimonials extends HTMLElement {
           border-radius: 20px;
           background: rgba(0, 0, 0, 0.7);
           border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .scrollHint {
-          position: absolute;
-          bottom: 10px;
-          right: 12px;
-          display: none;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 10px;
-          border-radius: 9999px;
-          background: rgba(0,0,0,.55);
-          border: 1px solid rgba(255,255,255,.18);
-          color: rgba(255,255,255,.88);
-          font-size: 12px;
-          box-shadow: 0 12px 30px rgba(0,0,0,.6);
-        }
-        .scrollHint svg {
-          width: 16px;
-          height: 16px;
-          fill: rgba(255,255,255,.88);
-          animation: hintMove 1600ms ease-in-out infinite;
-        }
-        @keyframes hintMove {
-          0% { transform: translateX(0); opacity: .8; }
-          50% { transform: translateX(6px); opacity: 1; }
-          100% { transform: translateX(0); opacity: .8; }
         }
         .formTitle {
           font-size: 14px;
@@ -309,7 +298,6 @@ class HotbiteTestimonials extends HTMLElement {
           .track.auto {
             animation: none;
           }
-          .scrollHint { display: inline-flex; }
         }
       </style>
 
@@ -347,11 +335,6 @@ class HotbiteTestimonials extends HTMLElement {
               <p class="message">Perfect buat konten challenge bareng temen sekos. Pedas tapi nagih.</p>
             </article>
           </div> 
-          <div class="scrollHint" aria-hidden="true">
-            <span>Swipe</span>
-            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
         </div>
         <div class="modal" aria-hidden="true">
           <div class="modalCard">
@@ -502,8 +485,9 @@ class HotbiteTestimonials extends HTMLElement {
 
         track.appendChild(card)
         try {
-          const truncated = messageEl.scrollHeight > Math.ceil(messageEl.clientHeight + 1)
-          if (truncated) {
+          const truncatedLayout = messageEl.scrollHeight > Math.ceil(messageEl.clientHeight + 1)
+          const truncatedText = (msg || '').length > MAX_LEN
+          if (truncatedLayout || truncatedText) {
             messageEl.classList.add('long')
             messageEl.style.cursor = 'pointer'
             messageEl.addEventListener('click', () => {
@@ -545,12 +529,10 @@ class HotbiteTestimonials extends HTMLElement {
     const setupMobileScroll = () => {
       if (!isMobile()) return
       const originalCount = Array.from(track.children).length
-      const hint = s.querySelector('.scrollHint')
       const onScroll = () => {
         const sl = track.scrollLeft
         activeIdx = Math.round(sl / cardWidth)
         applyStates()
-        if (hint) hint.style.display = 'none'
       }
       track.addEventListener('scroll', onScroll, { passive: true })
       try {
