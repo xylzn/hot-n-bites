@@ -256,6 +256,7 @@ class HotbiteTestimonials extends HTMLElement {
           cursor: default;
           transform: none;
           box-shadow: none;
+          pointer-events: none;
         }
         @keyframes scrollLeft {
           0% {
@@ -378,7 +379,6 @@ class HotbiteTestimonials extends HTMLElement {
               <p class="hint">Testimoni baru akan langsung muncul di deretan kartu di atas.</p>
               <button type="submit" class="submit">Kirim testimoni</button>
             </div>
-            <div class="notice hidden" aria-live="polite"></div>
           </form>
         </div>
       </section>
@@ -388,7 +388,23 @@ class HotbiteTestimonials extends HTMLElement {
     const form = s.querySelector('form')
     const submit = s.querySelector('.submit')
     const endpoint = window.__API_URL || '/api/testimonials'
-    const notice = s.querySelector('.notice')
+    // notice dihapus: gunakan bubble global
+    const showBubble = (text, isError=false) => {
+      let b = document.querySelector('.hotbite-bubble')
+      if (!b) {
+        b = document.createElement('div')
+        b.className = 'hotbite-bubble'
+        document.body.appendChild(b)
+      }
+      b.textContent = text
+      b.classList.remove('hide')
+      b.classList.add('show')
+      if (isError) b.classList.add('error'); else b.classList.remove('error')
+      setTimeout(() => {
+        b.classList.add('hide')
+        setTimeout(() => { try { b.remove() } catch {} }, 500)
+      }, 5000)
+    }
 
     const initialCards = Array.from(track.children)
     const countEl = s.querySelector('.count')
@@ -489,17 +505,25 @@ class HotbiteTestimonials extends HTMLElement {
       })
     }
 
-    const mobileAuto = () => {
+    const setupMobileLoop = () => {
       if (!isMobile()) return
-      const tick = () => {
-        const cards = Array.from(track.children)
-        activeIdx = (activeIdx + 1) % cards.length
-        applyStates()
-        cards[activeIdx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' })
-        setTimeout(tick, 2400)
-      }
+      const originalCards = Array.from(track.children)
+      const originalCount = originalCards.length
+      // gandakan konten agar loop terasa tanpa auto
+      originalCards.forEach(c => track.appendChild(c.cloneNode(true)))
       applyStates()
-      setTimeout(tick, 2400)
+      const onScroll = () => {
+        const maxOffset = originalCount * cardWidth
+        const sl = track.scrollLeft
+        if (sl >= maxOffset) {
+          track.scrollLeft = sl - maxOffset
+        } else if (sl < 0) {
+          track.scrollLeft = sl + maxOffset
+        }
+        activeIdx = Math.round(track.scrollLeft / cardWidth) % originalCount
+        applyStates()
+      }
+      track.addEventListener('scroll', onScroll, { passive: true })
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open') })
@@ -524,14 +548,13 @@ class HotbiteTestimonials extends HTMLElement {
           }
           setCount(items.length)
           setupMarquee()
-          mobileAuto()
+          setupMobileLoop()
         })
         .catch(err => {
           renderFallback()
           setupMarquee()
-          mobileAuto()
-          notice.textContent = 'Gagal memuat data: ' + (err && err.message || 'unknown')
-          notice.className = 'notice error'
+          setupMobileLoop()
+          showBubble('Gagal memuat data: ' + (err && err.message || 'unknown'), true)
           setCount(0)
         })
     }
@@ -550,8 +573,7 @@ class HotbiteTestimonials extends HTMLElement {
       if (!name || !product || !level || !message) return
 
       submit.disabled = true
-      notice.textContent = 'Mengirim testimoni…'
-      notice.className = 'notice info'
+      showBubble('Mengirim testimoni…')
 
       const card = document.createElement('article')
       card.className = 'card'
@@ -586,17 +608,11 @@ class HotbiteTestimonials extends HTMLElement {
         if (!res.ok) {
           let txt = ''
           try { txt = await res.text() } catch {}
-          notice.textContent = txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status)
-          notice.className = 'notice error'
-          showBubble('Gagal kirim testimoni', true)
+          showBubble(txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status), true)
           return
         }
-        notice.textContent = 'Berhasil kirim testimoni'
-        notice.className = 'notice success'
         showBubble('Testimoni berhasil dikirim')
-      }).catch(err => {
-        notice.textContent = 'Gagal kirim: ' + (err && err.message || 'unknown')
-        notice.className = 'notice error'
+      }).catch(async err => {
         showBubble('Gagal kirim: ' + (err && err.message || 'unknown'), true)
       }).finally(() => {
         setTimeout(() => {
@@ -609,48 +625,21 @@ class HotbiteTestimonials extends HTMLElement {
               const items = Array.isArray(data.items) ? data.items : []
               if (items.length) {
                 renderFromItems(items)
+                setCount(items.length)
               }
+              setupMobileLoop()
               setupMarquee()
-              mobileAuto()
-              setCount(items.length)
-              notice.textContent = 'Data testimoni diperbarui'
-              notice.className = 'notice success'
+              showBubble('Data testimoni diperbarui')
             })
-            .catch(async err => {
-              let msg = ''
-              try { msg = await err?.message } catch {}
-              notice.textContent = 'Gagal perbarui data: ' + (msg || 'unknown')
-              notice.className = 'notice error'
+            .catch(() => {
               // Biarkan count tidak berubah saat gagal refresh
             })
         }, 400)
+        setTimeout(() => { submit.disabled = false }, 500)
       })
 
       form.reset()
-      submit.disabled = false
     })
-
-    const showBubble = (text, isError=false) => {
-      let b = document.querySelector('.hotbite-bubble')
-      if (!b) {
-        b = document.createElement('div')
-        b.className = 'hotbite-bubble bubble'
-        b.style.position = 'fixed'
-        b.style.top = '20px'
-        b.style.right = '20px'
-        b.style.zIndex = '9999'
-        // styles applied via class definitions inside shadow will not leak,
-        // so we apply minimal inline styles already above and rely on class 'bubble' defined here
-        document.body.appendChild(b)
-      }
-      b.textContent = text
-      b.classList.remove('hide')
-      b.classList.add('show')
-      setTimeout(() => {
-        b.classList.add('hide')
-        setTimeout(() => { try { b.remove() } catch {} }, 500)
-      }, 5000)
-    }
   }
 }
 
