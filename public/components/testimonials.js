@@ -134,7 +134,7 @@ class HotbiteTestimonials extends HTMLElement {
           background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
         }
         .message.expand{
-        -webkit-line-clamp: unset;
+          -webkit-line-clamp: unset;
           overflow: visible;
         }
         .message.expand.long::after { display: none; }
@@ -148,10 +148,20 @@ class HotbiteTestimonials extends HTMLElement {
           z-index: 9998;
         }
         .read-more {
-          margin-top: 10px;
+          margin-top: 8px;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
           font-size: 12px;
           color: rgba(255, 214, 10, 0.9);
           cursor: pointer;
+          border-radius: 9999px;
+          padding: 4px 10px;
+          background: rgba(0,0,0,.4);
+        }
+        .read-more::after {
+          content: '›';
+          font-size: 11px;
         }
         .modal.open { display: flex; }
         .modalCard {
@@ -500,8 +510,7 @@ class HotbiteTestimonials extends HTMLElement {
           const truncatedText = (msg || '').length > 60
           if (truncatedLayout || truncatedText) {
             messageEl.classList.add('long')
-            const rm = document.createElement('button')
-            rm.type = 'button'
+            const rm = document.createElement('span')
             rm.className = 'read-more'
             rm.textContent = 'Read more'
             rm.addEventListener('click', () => {
@@ -531,8 +540,7 @@ class HotbiteTestimonials extends HTMLElement {
           if (truncatedLayout || truncatedText) {
             messageEl.classList.add('long')
             if (!messageEl.parentElement.querySelector('.read-more')) {
-              const rm = document.createElement('button')
-              rm.type = 'button'
+              const rm = document.createElement('span')
               rm.className = 'read-more'
               rm.textContent = 'Read more'
               rm.addEventListener('click', () => {
@@ -691,16 +699,6 @@ class HotbiteTestimonials extends HTMLElement {
       })
 
       form.reset()
-    })
-    s.addEventListener('click', e => {
-      const t = e.target
-      if (!(t && t.classList && t.classList.contains('read-more'))) return
-      const card = t.closest('.card')
-      if (!card) return
-      const msg = card.querySelector('.message')
-      if (!msg) return
-      msg.classList.toggle('expand')
-      t.textContent = msg.classList.contains('expand') ? 'Read less' : 'Read more'
     })
   }
 }
