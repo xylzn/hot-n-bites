@@ -116,11 +116,25 @@ class HotbiteTestimonials extends HTMLElement {
           font-size: 13px;
           line-height: 1.5;
           overflow: hidden;
-          text-overflow: ellipsis;
+          word-break: break-word;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           position: relative;
+        }
+        .message.long::after {
+          content: '…';
+          position: absolute;
+          right: 8px;
+          bottom: 0;
+          height: 1.2em;
+          display: block;
+          text-align: right;
+          padding-left: 18px;
+          background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
+        }
+        .message.expand{
+        -webkit-line-clamp: unset;
         }
         .modal {
           position: fixed;
@@ -130,6 +144,12 @@ class HotbiteTestimonials extends HTMLElement {
           justify-content: center;
           background: rgba(0,0,0,.65);
           z-index: 9998;
+        }
+        .read-more {
+          margin-top: 10px;
+          font-size: 12px;
+          color: rgba(255, 214, 10, 0.9);
+          cursor: pointer;
         }
         .modal.open { display: flex; }
         .modalCard {
@@ -330,6 +350,7 @@ class HotbiteTestimonials extends HTMLElement {
             <div class="name mName"></div>
             <div class="level mLevel"></div>
             <p class="message mMessage"></p>
+            <span class="read-more>Lihat selengkapnya</span>
           </div>
         </div>
 
@@ -474,17 +495,18 @@ class HotbiteTestimonials extends HTMLElement {
         track.appendChild(card)
         try {
           const truncatedLayout = messageEl.scrollHeight > Math.ceil(messageEl.clientHeight + 1)
-          const truncatedText = (msg || '').length > MAX_LEN
+          const truncatedText = (msg || '').length > 60
           if (truncatedLayout || truncatedText) {
             messageEl.classList.add('long')
-            messageEl.style.cursor = 'pointer'
-            messageEl.addEventListener('click', () => {
-              mProduct.textContent = productEl.textContent
-              mName.textContent = nameEl.textContent
-              mLevel.textContent = levelEl.textContent
-              mMessage.textContent = msg
-              modal.classList.add('open')
+            const rm = document.createElement('button')
+            rm.type = 'button'
+            rm.className = 'read-more'
+            rm.textContent = 'Read more'
+            rm.addEventListener('click', () => {
+              messageEl.classList.toggle('expand')
+              rm.textContent = messageEl.classList.contains('expand') ? 'Read less' : 'Read more'
             })
+            card.appendChild(rm)
           }
         } catch {}
       })
@@ -498,6 +520,28 @@ class HotbiteTestimonials extends HTMLElement {
         track.appendChild(card.cloneNode(true))
       })
       applyStates()
+      try {
+        const msgs = Array.from(track.querySelectorAll('.card .message'))
+        msgs.forEach(messageEl => {
+          const txt = messageEl.textContent || ''
+          const truncatedLayout = messageEl.scrollHeight > Math.ceil(messageEl.clientHeight + 1)
+          const truncatedText = (txt || '').length > 60
+          if (truncatedLayout || truncatedText) {
+            messageEl.classList.add('long')
+            if (!messageEl.parentElement.querySelector('.read-more')) {
+              const rm = document.createElement('button')
+              rm.type = 'button'
+              rm.className = 'read-more'
+              rm.textContent = 'Read more'
+              rm.addEventListener('click', () => {
+                messageEl.classList.toggle('expand')
+                rm.textContent = messageEl.classList.contains('expand') ? 'Read less' : 'Read more'
+              })
+              messageEl.parentElement.appendChild(rm)
+            }
+          }
+        })
+      } catch {}
       cardWidth = getCardWidth()
     }
 
@@ -645,6 +689,16 @@ class HotbiteTestimonials extends HTMLElement {
       })
 
       form.reset()
+    })
+    s.addEventListener('click', e => {
+      const t = e.target
+      if (!(t && t.classList && t.classList.contains('read-more'))) return
+      const card = t.closest('.card')
+      if (!card) return
+      const msg = card.querySelector('.message')
+      if (!msg) return
+      msg.classList.toggle('expand')
+      t.textContent = msg.classList.contains('expand') ? 'Read less' : 'Read more'
     })
   }
 }
