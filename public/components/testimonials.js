@@ -110,10 +110,14 @@ class HotbiteTestimonials extends HTMLElement {
         .message.long::after {
           content: '…';
           position: absolute;
-          right: 8px;
+          right: 0;
           bottom: 0;
+          height: 1.2em;
+          width: 30%;
+          display: block;
+          text-align: right;
+          padding-right: 10px;
           background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
-          padding-left: 18px;
         }
         .modal {
           position: fixed;
@@ -163,7 +167,32 @@ class HotbiteTestimonials extends HTMLElement {
           border-radius: 20px;
           background: rgba(0, 0, 0, 0.7);
           border: 1px solid rgba(255, 255, 255, 0.18);
-          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+        }
+        .scrollHint {
+          position: absolute;
+          bottom: 10px;
+          right: 12px;
+          display: none;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 10px;
+          border-radius: 9999px;
+          background: rgba(0,0,0,.55);
+          border: 1px solid rgba(255,255,255,.18);
+          color: rgba(255,255,255,.88);
+          font-size: 12px;
+          box-shadow: 0 12px 30px rgba(0,0,0,.6);
+        }
+        .scrollHint svg {
+          width: 16px;
+          height: 16px;
+          fill: rgba(255,255,255,.88);
+          animation: hintMove 1600ms ease-in-out infinite;
+        }
+        @keyframes hintMove {
+          0% { transform: translateX(0); opacity: .8; }
+          50% { transform: translateX(6px); opacity: 1; }
+          100% { transform: translateX(0); opacity: .8; }
         }
         .formTitle {
           font-size: 14px;
@@ -214,22 +243,6 @@ class HotbiteTestimonials extends HTMLElement {
           justify-content: space-between;
           gap: 12px;
         }
-        .notice {
-          min-height: 32px;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 6px 12px;
-          border-radius: 12px;
-          font-size: 12px;
-          background: rgba(0,0,0,.5);
-          border: 1px solid rgba(255,255,255,.18);
-          color: rgba(255,255,255,.85);
-        }
-        .notice.hidden { display: none; }
-        .notice.success { background: rgba(10, 120, 40, .4); border-color: rgba(10, 160, 50, .4); }
-        .notice.error { background: rgba(160, 20, 20, .4); border-color: rgba(200, 40, 40, .5); }
-        .notice.info { background: rgba(0, 0, 0, .5); border-color: rgba(255,255,255,.18); }
         .hint {
           font-size: 12px;
           color: rgba(255, 255, 255, 0.7);
@@ -291,11 +304,12 @@ class HotbiteTestimonials extends HTMLElement {
             padding-bottom: 6px;
           }
           .card {
-            scroll-snap-align: start;
+            scroll-snap-align: center;
           }
           .track.auto {
             animation: none;
           }
+          .scrollHint { display: inline-flex; }
         }
       </style>
 
@@ -333,6 +347,11 @@ class HotbiteTestimonials extends HTMLElement {
               <p class="message">Perfect buat konten challenge bareng temen sekos. Pedas tapi nagih.</p>
             </article>
           </div> 
+          <div class="scrollHint" aria-hidden="true">
+            <span>Swipe</span>
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
         </div>
         <div class="modal" aria-hidden="true">
           <div class="modalCard">
@@ -389,7 +408,7 @@ class HotbiteTestimonials extends HTMLElement {
     const submit = s.querySelector('.submit')
     const endpoint = window.__API_URL || '/api/testimonials'
     // notice dihapus: gunakan bubble global
-    const showBubble = (text, isError=false) => {
+    const showBubble = (text, type='info') => {
       let b = document.querySelector('.hotbite-bubble')
       if (!b) {
         b = document.createElement('div')
@@ -399,7 +418,10 @@ class HotbiteTestimonials extends HTMLElement {
       b.textContent = text
       b.classList.remove('hide')
       b.classList.add('show')
-      if (isError) b.classList.add('error'); else b.classList.remove('error')
+      b.classList.remove('error','success','info')
+      if (type === 'error') b.classList.add('error')
+      else if (type === 'success') b.classList.add('success')
+      else b.classList.add('info')
       setTimeout(() => {
         b.classList.add('hide')
         setTimeout(() => { try { b.remove() } catch {} }, 500)
@@ -421,6 +443,14 @@ class HotbiteTestimonials extends HTMLElement {
     let cardWidth = 320 + 16
     let activeIdx = 0
     const MAX_LEN = 160
+    const getCardWidth = () => {
+      try {
+        const first = track.querySelector('.card')
+        if (!first) return cardWidth
+        const w = first.getBoundingClientRect().width
+        return Math.round(w + 16)
+      } catch { return cardWidth }
+    }
 
     const setupMarquee = () => {
       const cards = Array.from(track.children)
@@ -463,20 +493,7 @@ class HotbiteTestimonials extends HTMLElement {
         const messageEl = document.createElement('p')
         messageEl.className = 'message'
         const msg = item.message || ''
-        if (msg.length > MAX_LEN) {
-          messageEl.textContent = msg.slice(0, MAX_LEN)
-          messageEl.classList.add('long')
-          messageEl.style.cursor = 'pointer'
-          messageEl.addEventListener('click', () => {
-            mProduct.textContent = productEl.textContent
-            mName.textContent = nameEl.textContent
-            mLevel.textContent = levelEl.textContent
-            mMessage.textContent = msg
-            modal.classList.add('open')
-          })
-        } else {
-          messageEl.textContent = msg
-        }
+        messageEl.textContent = msg
 
         card.appendChild(productEl)
         card.appendChild(nameEl)
@@ -484,8 +501,23 @@ class HotbiteTestimonials extends HTMLElement {
         card.appendChild(messageEl)
 
         track.appendChild(card)
+        try {
+          const truncated = messageEl.scrollHeight > Math.ceil(messageEl.clientHeight + 1)
+          if (truncated) {
+            messageEl.classList.add('long')
+            messageEl.style.cursor = 'pointer'
+            messageEl.addEventListener('click', () => {
+              mProduct.textContent = productEl.textContent
+              mName.textContent = nameEl.textContent
+              mLevel.textContent = levelEl.textContent
+              mMessage.textContent = msg
+              modal.classList.add('open')
+            })
+          }
+        } catch {}
       })
       applyStates()
+      cardWidth = getCardWidth()
     }
 
     const renderFallback = () => {
@@ -494,36 +526,40 @@ class HotbiteTestimonials extends HTMLElement {
         track.appendChild(card.cloneNode(true))
       })
       applyStates()
+      cardWidth = getCardWidth()
     }
 
     const applyStates = () => {
       const cards = Array.from(track.children)
       cards.forEach((c, i) => {
         c.classList.remove('active','dim')
-        if (i === activeIdx) c.classList.add('active')
-        else c.classList.add('dim')
+        if (isMobile()) {
+          if (i === activeIdx) c.classList.add('active')
+          else c.classList.add('dim')
+        } else {
+          c.classList.add('active')
+        }
       })
     }
 
-    const setupMobileLoop = () => {
+    const setupMobileScroll = () => {
       if (!isMobile()) return
-      const originalCards = Array.from(track.children)
-      const originalCount = originalCards.length
-      // gandakan konten agar loop terasa tanpa auto
-      originalCards.forEach(c => track.appendChild(c.cloneNode(true)))
-      applyStates()
+      const originalCount = Array.from(track.children).length
+      const hint = s.querySelector('.scrollHint')
       const onScroll = () => {
-        const maxOffset = originalCount * cardWidth
         const sl = track.scrollLeft
-        if (sl >= maxOffset) {
-          track.scrollLeft = sl - maxOffset
-        } else if (sl < 0) {
-          track.scrollLeft = sl + maxOffset
-        }
-        activeIdx = Math.round(track.scrollLeft / cardWidth) % originalCount
+        activeIdx = Math.round(sl / cardWidth)
         applyStates()
+        if (hint) hint.style.display = 'none'
       }
       track.addEventListener('scroll', onScroll, { passive: true })
+      try {
+        const midIdx = Math.floor(originalCount / 2)
+        const mid = Math.max(0, Math.floor(midIdx * cardWidth - (track.clientWidth - cardWidth) / 2))
+        track.scrollLeft = mid
+        activeIdx = midIdx
+        applyStates()
+      } catch {}
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open') })
@@ -548,13 +584,13 @@ class HotbiteTestimonials extends HTMLElement {
           }
           setCount(items.length)
           setupMarquee()
-          setupMobileLoop()
+          setupMobileScroll()
         })
         .catch(err => {
           renderFallback()
           setupMarquee()
-          setupMobileLoop()
-          showBubble('Gagal memuat data: ' + (err && err.message || 'unknown'), true)
+          setupMobileScroll()
+          showBubble('Gagal memuat data: ' + (err && err.message || 'unknown'), 'error')
           setCount(0)
         })
     }
@@ -573,7 +609,7 @@ class HotbiteTestimonials extends HTMLElement {
       if (!name || !product || !level || !message) return
 
       submit.disabled = true
-      showBubble('Mengirim testimoni…')
+      showBubble('Mengirim testimoni…','info')
 
       const card = document.createElement('article')
       card.className = 'card'
@@ -608,12 +644,12 @@ class HotbiteTestimonials extends HTMLElement {
         if (!res.ok) {
           let txt = ''
           try { txt = await res.text() } catch {}
-          showBubble(txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status), true)
+          showBubble(txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status), 'error')
           return
         }
-        showBubble('Testimoni berhasil dikirim')
+        showBubble('Testimoni berhasil dikirim','success')
       }).catch(async err => {
-        showBubble('Gagal kirim: ' + (err && err.message || 'unknown'), true)
+        showBubble('Gagal kirim: ' + (err && err.message || 'unknown'), 'error')
       }).finally(() => {
         setTimeout(() => {
           fetch(endpoint)
@@ -627,9 +663,9 @@ class HotbiteTestimonials extends HTMLElement {
                 renderFromItems(items)
                 setCount(items.length)
               }
-              setupMobileLoop()
+              setupMobileScroll()
               setupMarquee()
-              showBubble('Data testimoni diperbarui')
+              showBubble('Data testimoni diperbarui','success')
             })
             .catch(() => {
               // Biarkan count tidak berubah saat gagal refresh

@@ -103,3 +103,11 @@ img {
   border-color: rgba(200,40,40,.5);
   background: rgba(160,20,20,.8);
 }
+.hotbite-bubble.success {
+  border-color: rgba(10,160,50,.5);
+  background: rgba(10,120,40,.8);
+}
+.hotbite-bubble.info {
+  border-color: rgba(255,255,255,.18);
+  background: rgba(0,0,0,.85);
+}
