@@ -71,6 +71,17 @@ class HotbiteTestimonials extends HTMLElement {
           border: 1px solid rgba(255, 255, 255, 0.12);
           color: rgba(255, 255, 255, 0.9);
           font-size: 13px;
+          transition: transform 320ms ease, opacity 320ms ease, box-shadow 320ms ease;
+        }
+        .card.active {
+          opacity: 1;
+          transform: scale(1.0);
+          box-shadow: 0 18px 46px rgba(0,0,0,.9);
+          border-color: rgba(255,255,255,.2);
+        }
+        .card.dim {
+          opacity: .45;
+          transform: scale(.98);
         }
         .product {
           font-size: 12px;
@@ -90,7 +101,62 @@ class HotbiteTestimonials extends HTMLElement {
           margin-top: 10px;
           font-size: 13px;
           line-height: 1.5;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          position: relative;
         }
+        .message.long::after {
+          content: '…';
+          position: absolute;
+          right: 8px;
+          bottom: 0;
+          background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
+          padding-left: 18px;
+        }
+        .modal {
+          position: fixed;
+          inset: 0;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,.65);
+          z-index: 9998;
+        }
+        .modal.open { display: flex; }
+        .modalCard {
+          max-width: 600px;
+          width: calc(100% - 40px);
+          background: rgba(0,0,0,.8);
+          border: 1px solid rgba(255,255,255,.2);
+          border-radius: 18px;
+          color: rgba(255,255,255,.92);
+          padding: 16px 18px 18px;
+          box-shadow: 0 28px 60px rgba(0,0,0,.9);
+          animation: modalIn 220ms ease-out;
+        }
+        @keyframes modalIn { from { transform: translateY(8px); opacity: .6; } to { transform: none; opacity: 1; } }
+        .bubble {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 10000;
+          display: none;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 12px;
+          border-radius: 16px;
+          background: rgba(0,0,0,.85);
+          border: 1px solid rgba(255,255,255,.18);
+          color: rgba(255,255,255,.92);
+          font-size: 12px;
+          box-shadow: 0 18px 40px rgba(0,0,0,.85);
+        }
+        .bubble.show { display: inline-flex; animation: slideIn 220ms ease-out; }
+        .bubble.hide { animation: fadeOut 260ms ease-in forwards; }
+        @keyframes slideIn { from { transform: translateX(12px); opacity: .6; } to { transform: none; opacity: 1; } }
+        @keyframes fadeOut { to { transform: translateX(12px); opacity: 0; } }
         .formWrap {
           margin-top: 20px;
           padding: 18px 18px 20px;
@@ -267,6 +333,14 @@ class HotbiteTestimonials extends HTMLElement {
             </article>
           </div> 
         </div>
+        <div class="modal" aria-hidden="true">
+          <div class="modalCard">
+            <div class="product mProduct"></div>
+            <div class="name mName"></div>
+            <div class="level mLevel"></div>
+            <p class="message mMessage"></p>
+          </div>
+        </div>
 
         <div class="formWrap">
           <div class="formTitle">Tulis pengalaman kepedesan versi kamu.</div>
@@ -320,6 +394,17 @@ class HotbiteTestimonials extends HTMLElement {
     const countEl = s.querySelector('.count')
     const isMobile = () => window.matchMedia('(max-width: 768px)').matches
     const setCount = n => { try { countEl.textContent = String(n || 0) } catch {} }
+    const modal = s.querySelector('.modal')
+    const mProduct = s.querySelector('.mProduct')
+    const mName = s.querySelector('.mName')
+    const mLevel = s.querySelector('.mLevel')
+    const mMessage = s.querySelector('.mMessage')
+    let rafId = null
+    let offsetX = 0
+    let speed = 0.08
+    let cardWidth = 320 + 16
+    let activeIdx = 0
+    const MAX_LEN = 160
 
     const setupMarquee = () => {
       const cards = Array.from(track.children)
@@ -327,7 +412,17 @@ class HotbiteTestimonials extends HTMLElement {
       if (cards.length > 3 && !isMobile()) {
         const clone = cards.map(card => card.cloneNode(true))
         clone.forEach(node => track.appendChild(node))
-        track.classList.add('auto')
+        // Continuous RAF animation with seamless modulo
+        const totalCards = track.children.length
+        const loopWidth = totalCards * cardWidth
+        const step = () => {
+          offsetX += speed
+          if (offsetX >= loopWidth) offsetX -= loopWidth
+          track.style.transform = 'translateX(' + (-offsetX) + 'px)'
+          rafId = requestAnimationFrame(step)
+        }
+        if (rafId) cancelAnimationFrame(rafId)
+        rafId = requestAnimationFrame(step)
       }
     }
 
@@ -351,7 +446,21 @@ class HotbiteTestimonials extends HTMLElement {
 
         const messageEl = document.createElement('p')
         messageEl.className = 'message'
-        messageEl.textContent = item.message || ''
+        const msg = item.message || ''
+        if (msg.length > MAX_LEN) {
+          messageEl.textContent = msg.slice(0, MAX_LEN)
+          messageEl.classList.add('long')
+          messageEl.style.cursor = 'pointer'
+          messageEl.addEventListener('click', () => {
+            mProduct.textContent = productEl.textContent
+            mName.textContent = nameEl.textContent
+            mLevel.textContent = levelEl.textContent
+            mMessage.textContent = msg
+            modal.classList.add('open')
+          })
+        } else {
+          messageEl.textContent = msg
+        }
 
         card.appendChild(productEl)
         card.appendChild(nameEl)
@@ -360,6 +469,7 @@ class HotbiteTestimonials extends HTMLElement {
 
         track.appendChild(card)
       })
+      applyStates()
     }
 
     const renderFallback = () => {
@@ -367,7 +477,33 @@ class HotbiteTestimonials extends HTMLElement {
       initialCards.forEach(card => {
         track.appendChild(card.cloneNode(true))
       })
+      applyStates()
     }
+
+    const applyStates = () => {
+      const cards = Array.from(track.children)
+      cards.forEach((c, i) => {
+        c.classList.remove('active','dim')
+        if (i === activeIdx) c.classList.add('active')
+        else c.classList.add('dim')
+      })
+    }
+
+    const mobileAuto = () => {
+      if (!isMobile()) return
+      const tick = () => {
+        const cards = Array.from(track.children)
+        activeIdx = (activeIdx + 1) % cards.length
+        applyStates()
+        cards[activeIdx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' })
+        setTimeout(tick, 2400)
+      }
+      applyStates()
+      setTimeout(tick, 2400)
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open') })
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open') })
 
     const loadFromSheet = () => {
       fetch(endpoint)
@@ -388,10 +524,12 @@ class HotbiteTestimonials extends HTMLElement {
           }
           setCount(items.length)
           setupMarquee()
+          mobileAuto()
         })
         .catch(err => {
           renderFallback()
           setupMarquee()
+          mobileAuto()
           notice.textContent = 'Gagal memuat data: ' + (err && err.message || 'unknown')
           notice.className = 'notice error'
           setCount(0)
@@ -450,13 +588,16 @@ class HotbiteTestimonials extends HTMLElement {
           try { txt = await res.text() } catch {}
           notice.textContent = txt ? ('Gagal kirim: ' + txt) : ('Gagal kirim: ' + res.status)
           notice.className = 'notice error'
+          showBubble('Gagal kirim testimoni', true)
           return
         }
         notice.textContent = 'Berhasil kirim testimoni'
         notice.className = 'notice success'
+        showBubble('Testimoni berhasil dikirim')
       }).catch(err => {
         notice.textContent = 'Gagal kirim: ' + (err && err.message || 'unknown')
         notice.className = 'notice error'
+        showBubble('Gagal kirim: ' + (err && err.message || 'unknown'), true)
       }).finally(() => {
         setTimeout(() => {
           fetch(endpoint)
@@ -470,6 +611,7 @@ class HotbiteTestimonials extends HTMLElement {
                 renderFromItems(items)
               }
               setupMarquee()
+              mobileAuto()
               setCount(items.length)
               notice.textContent = 'Data testimoni diperbarui'
               notice.className = 'notice success'
@@ -487,6 +629,28 @@ class HotbiteTestimonials extends HTMLElement {
       form.reset()
       submit.disabled = false
     })
+
+    const showBubble = (text, isError=false) => {
+      let b = document.querySelector('.hotbite-bubble')
+      if (!b) {
+        b = document.createElement('div')
+        b.className = 'hotbite-bubble bubble'
+        b.style.position = 'fixed'
+        b.style.top = '20px'
+        b.style.right = '20px'
+        b.style.zIndex = '9999'
+        // styles applied via class definitions inside shadow will not leak,
+        // so we apply minimal inline styles already above and rely on class 'bubble' defined here
+        document.body.appendChild(b)
+      }
+      b.textContent = text
+      b.classList.remove('hide')
+      b.classList.add('show')
+      setTimeout(() => {
+        b.classList.add('hide')
+        setTimeout(() => { try { b.remove() } catch {} }, 500)
+      }, 5000)
+    }
   }
 }
 
