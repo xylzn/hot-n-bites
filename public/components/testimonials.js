@@ -118,7 +118,7 @@ class HotbiteTestimonials extends HTMLElement {
           overflow: hidden;
           word-break: break-word;
           display: -webkit-box;
-          -webkit-line-clamp: 4;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           position: relative;
         }
@@ -134,10 +134,9 @@ class HotbiteTestimonials extends HTMLElement {
           background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.6));
         }
         .message.expand{
-          -webkit-line-clamp: unset;
-          overflow: visible;
+          -webkit-line-clamp: 4;
+          overflow: hidden;
         }
-        .message.expand.long::after { display: none; }
         .modal {
           position: fixed;
           inset: 0;
