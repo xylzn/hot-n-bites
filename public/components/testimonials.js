@@ -137,6 +137,7 @@ class HotbiteTestimonials extends HTMLElement {
           -webkit-line-clamp: 4;
           overflow: hidden;
         }
+        .message.expand.long::after { display: none; }
         .modal {
           position: fixed;
           inset: 0;
@@ -511,10 +512,10 @@ class HotbiteTestimonials extends HTMLElement {
             messageEl.classList.add('long')
             const rm = document.createElement('span')
             rm.className = 'read-more'
-            rm.textContent = 'Read more'
+            rm.textContent = 'Lihat selengkapnya'
             rm.addEventListener('click', () => {
               messageEl.classList.toggle('expand')
-              rm.textContent = messageEl.classList.contains('expand') ? 'Read less' : 'Read more'
+              rm.textContent = messageEl.classList.contains('expand') ? 'Tutup' : 'Lihat selengkapnya'
             })
             card.appendChild(rm)
           }
@@ -541,10 +542,10 @@ class HotbiteTestimonials extends HTMLElement {
             if (!messageEl.parentElement.querySelector('.read-more')) {
               const rm = document.createElement('span')
               rm.className = 'read-more'
-              rm.textContent = 'Read more'
+              rm.textContent = 'Lihat selengkapnya'
               rm.addEventListener('click', () => {
                 messageEl.classList.toggle('expand')
-                rm.textContent = messageEl.classList.contains('expand') ? 'Read less' : 'Read more'
+                rm.textContent = messageEl.classList.contains('expand') ? 'Tutup' : 'Lihat selengkapnya'
               })
               messageEl.parentElement.appendChild(rm)
             }
